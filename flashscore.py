@@ -4,6 +4,9 @@ import os
 from typing import Optional
 
 from browsers.base_browser import BaseBrowser
+from browsers.browser_factory import BrowserFactory, BrowserType
+from browsers.edge_browser import EdgeOptionArguments
+from factories.match_factory import MatchFactory
 from models.config import Config
 
 
@@ -120,7 +123,23 @@ def main():
     leagues_data = get_leagues_mapping()
 
     config = validate_arguments(args, leagues_data)
-    print(config)
+    print(f"Config: {config}")
+    browser = BrowserFactory().create_browser(
+        browser_type=BrowserType.EDGE,
+        # options_args= [EdgeOptionArguments.HEADLESS]
+    )
+
+    try:
+        to_process_matches = MatchFactory(browser, config).create_matches()
+        print(
+            f"Factory returned the following list of {len(to_process_matches)} matches for processing:"
+        )
+        matches_dict = [match.to_dict() for match in to_process_matches]
+        print(json.dumps(matches_dict, indent=4))
+    except Exception as e:
+        print(f"Error while creating matches: {str(e)}")
+    finally:
+        browser.quit()
 
 
 if __name__ == "__main__":
