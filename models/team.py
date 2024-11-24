@@ -1,12 +1,19 @@
-import json
+# Location: models/team.py
+
+from dataclasses import dataclass
+from uuid import UUID, uuid4
 
 
+@dataclass
 class Team:
-    def __init__(self, name: str):
-        self.name = name
+    """Represents a football team."""
 
-    def to_dict(self):
-        return {"name": self.name}
+    team_id: UUID
+    name: str
+    country: str
+    team_url: str
 
-    def __str__(self):
-        return f"Team(name={self.name})"
+    @classmethod
+    def create(cls, name: str, country: str, team_url: str) -> "Team":
+        """Factory method to create a new Team instance with a generated UUID."""
+        return cls(team_id=uuid4(), name=name, country=country, team_url=team_url)
