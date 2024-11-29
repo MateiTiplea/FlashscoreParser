@@ -11,6 +11,7 @@ from browsers.base_browser import BaseBrowser, LocatorType
 from models.match import Match
 from models.match_status import MatchStatus
 from models.team import Team
+from services.factories.team_factory import TeamFactory
 
 
 class MatchFactory:
@@ -26,7 +27,7 @@ class MatchFactory:
     AWAY_TEAM_SELECTOR = "#detail > div.duelParticipant > div.duelParticipant__away"
     MATCH_STATUS_SELECTOR = '//*[@id="detail"]/div[4]/div[3]/div/div[2]/span'
 
-    def __init__(self, browser: BaseBrowser):
+    def __init__(self, browser: BaseBrowser, team_factory: TeamFactory):
         """
         Initialize the factory with required dependencies.
 
@@ -35,6 +36,7 @@ class MatchFactory:
             team_factory: Instance of TeamFactory for creating Team objects
         """
         self.browser = browser
+        self.team_factory = team_factory
         self.logger = logging.getLogger(__name__)
 
     def create_match(self, match_url: str) -> Optional[Match]:
@@ -188,13 +190,12 @@ class MatchFactory:
             if not element:
                 return None
 
-            team_name = element.text
             team_url = element.find_element(By.CSS_SELECTOR, "a").get_attribute("href")
             if not team_url:
                 return None
-            if not team_name:
-                return None
-            return Team.create(name=team_name, team_url=team_url)
+
+            match_url = self.browser.save_current_url()
+            return self.team_factory.create_team_with_context(team_url, match_url)
         except Exception as e:
             self.logger.error(f"Error extracting home team: {str(e)}")
             return None
@@ -213,13 +214,12 @@ class MatchFactory:
             if not element:
                 return None
 
-            team_name = element.text
             team_url = element.find_element(By.CSS_SELECTOR, "a").get_attribute("href")
             if not team_url:
                 return None
-            if not team_name:
-                return None
-            return Team.create(name=team_name, team_url=team_url)
+
+            match_url = self.browser.save_current_url()
+            return self.team_factory.create_team_with_context(team_url, match_url)
         except Exception as e:
             self.logger.error(f"Error extracting away team: {str(e)}")
             return None

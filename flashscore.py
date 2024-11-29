@@ -9,6 +9,7 @@ from browsers.edge_browser import EdgeOptionArguments
 from models.config import Config
 from services.factories.fixtures_url_factory import FixturesURLFactory
 from services.factories.match_factory import MatchFactory
+from services.factories.team_factory import TeamFactory
 
 
 def get_leagues_mapping() -> Optional[dict[str, dict[str, str]]]:
@@ -137,7 +138,8 @@ def main():
     matches_url = FixturesURLFactory(browser, config).get_fixtures_urls()
     print("Found a number of matches: ", len(matches_url))
 
-    match_instance = MatchFactory(browser).create_match(matches_url[0])
+    team_factory = TeamFactory(browser)
+    match_instance = MatchFactory(browser, team_factory).create_match(matches_url[0])
     print("Match instance: ", match_instance)
     browser.quit()
 

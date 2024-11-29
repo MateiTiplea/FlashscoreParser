@@ -48,6 +48,19 @@ class BaseBrowser:
         self.driver.quit()
         logging.info("Quit the driver and closed all associated windows.")
 
+    def save_current_url(self) -> str:
+        """
+        Save the current URL and return it.
+        """
+        return self.driver.current_url
+
+    def restore_url(self, url: str) -> None:
+        """
+        Restore the URL to the specified value.
+        """
+        if self.driver.current_url != url:
+            self.open_url(url)
+
     def find_element(
         self,
         locator_type: Union[LocatorType, str],
