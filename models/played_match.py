@@ -1,6 +1,7 @@
 # Location: models/played_match.py
 
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Optional
 
 from models.match import Match
@@ -26,7 +27,7 @@ class PlayedMatch(Match):
         match_url: str,
         country: str,
         competition: str,
-        match_date: str,
+        match_date: datetime,
         round: Optional[str],
         home_team: Team,
         away_team: Team,
@@ -54,8 +55,8 @@ class PlayedMatch(Match):
         Returns:
             A new PlayedMatch instance
         """
-        # Create base match first
-        match = super().create(
+        # Create base match first using parent class's create method
+        base_match = Match.create(
             match_url=match_url,
             country=country,
             competition=competition,
@@ -66,17 +67,17 @@ class PlayedMatch(Match):
             status=status,
         )
 
-        # Add played match specific fields
+        # Create PlayedMatch instance with all fields
         return cls(
-            match_id=match.match_id,
-            match_url=match.match_url,
-            country=match.country,
-            competition=match.competition,
-            match_date=match.match_date,
-            round=match.round,
-            home_team=match.home_team,
-            away_team=match.away_team,
-            status=match.status,
+            match_id=base_match.match_id,
+            match_url=base_match.match_url,
+            country=base_match.country,
+            competition=base_match.competition,
+            match_date=base_match.match_date,
+            round=base_match.round,
+            home_team=base_match.home_team,
+            away_team=base_match.away_team,
+            status=base_match.status,
             home_score=home_score,
             away_score=away_score,
             statistics=statistics,
@@ -88,6 +89,17 @@ class PlayedMatch(Match):
             f"{self.home_team.name} {self.home_score} - {self.away_score} {self.away_team.name} "
             f"({self.competition}, {self.country})"
         )
+
+    # def __repr__(self) -> str:
+    #     """Return a string representation of the played match."""
+    #     return (
+    #         f"PlayedMatch(match_id={self.match_id}, match_url={self.match_url}, "
+    #         f"country={self.country}, competition={self.competition}, "
+    #         f"match_date={self.match_date}, round={self.round}, "
+    #         f"home_team={self.home_team}, away_team={self.away_team}, "
+    #         f"status={self.status}, home_score={self.home_score}, "
+    #         f"away_score={self.away_score}, statistics={self.statistics})"
+    #     )
 
     def get_winner(self) -> Optional[Team]:
         """Returns the winning team, or None if it was a draw."""

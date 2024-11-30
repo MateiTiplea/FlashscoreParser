@@ -12,9 +12,13 @@ class MatchStatistics:
     stats_id: UUID
     match_id: UUID
 
-    # Ball possession (as percentage)
-    home_possession: Optional[float] = None
-    away_possession: Optional[float] = None
+    #  Expected goals (xG)
+    home_expected_goals: Optional[float] = None
+    away_expected_goals: Optional[float] = None
+
+    # Ball possession (as integer percentage)
+    home_possession: Optional[int] = None
+    away_possession: Optional[int] = None
 
     # Shots
     home_shots_total: Optional[int] = None
@@ -23,10 +27,28 @@ class MatchStatistics:
     away_shots_on_target: Optional[int] = None
     home_shots_off_target: Optional[int] = None
     away_shots_off_target: Optional[int] = None
+    home_shots_blocked: Optional[int] = None
+    away_shots_blocked: Optional[int] = None
+
+    #  Free kicks
+    home_free_kicks: Optional[int] = None
+    away_free_kicks: Optional[int] = None
 
     # Set pieces
     home_corners: Optional[int] = None
     away_corners: Optional[int] = None
+
+    #  Offsides
+    home_offsides: Optional[int] = None
+    away_offsides: Optional[int] = None
+
+    #  Throw-ins
+    home_throw_ins: Optional[int] = None
+    away_throw_ins: Optional[int] = None
+
+    #  Goalkeeper saves
+    home_goalkeeper_saves: Optional[int] = None
+    away_goalkeeper_saves: Optional[int] = None
 
     # Fouls and cards
     home_fouls: Optional[int] = None
@@ -36,9 +58,19 @@ class MatchStatistics:
     home_red_cards: Optional[int] = None
     away_red_cards: Optional[int] = None
 
-    # Offsides
-    home_offsides: Optional[int] = None
-    away_offsides: Optional[int] = None
+    #  Passes
+    home_total_passes: Optional[int] = None
+    away_total_passes: Optional[int] = None
+    home_completed_passes: Optional[int] = None
+    away_completed_passes: Optional[int] = None
+
+    #  Crosses
+    home_crosses: Optional[int] = None
+    away_crosses: Optional[int] = None
+
+    #  Interceptions
+    home_interceptions: Optional[int] = None
+    away_interceptions: Optional[int] = None
 
     @classmethod
     def create(cls, match_id: UUID, **statistics) -> "MatchStatistics":

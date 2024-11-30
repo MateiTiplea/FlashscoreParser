@@ -56,6 +56,11 @@ class MatchFactory:
             # Navigate to match page
             self.browser.open_url(match_url)
 
+            # Handle any cookie consent popups
+            if not self._handle_cookie_consent():
+                self.logger.error("Failed to handle cookie consent popup")
+                return None
+
             # Extract all required components
             country, competition, round_info = (
                 self._extract_country_and_competition_and_round()
@@ -223,3 +228,25 @@ class MatchFactory:
         except Exception as e:
             self.logger.error(f"Error extracting away team: {str(e)}")
             return None
+
+    def _handle_cookie_consent(self) -> bool:
+        """
+        Handle any cookie consent popups.
+
+        Returns:
+            True if handled successfully or not present, False if failed
+        """
+        possible_cookie_selector = "#onetrust-accept-btn-handler"
+        if not self.browser.is_element_present(
+            LocatorType.CSS_SELECTOR, possible_cookie_selector, suppress_exception=True
+        ):
+            return True
+
+        try:
+            self.browser.click_element(
+                LocatorType.CSS_SELECTOR, possible_cookie_selector
+            )
+            return True
+        except Exception as e:
+            self.logger.error(f"Error handling cookie consent: {str(e)}")
+            return False

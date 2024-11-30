@@ -9,7 +9,9 @@ from browsers.edge_browser import EdgeOptionArguments
 from models.config import Config
 from services.factories.fixtures_url_factory import FixturesURLFactory
 from services.factories.match_factory import MatchFactory
+from services.factories.played_match_factory import PlayedMatchFactory
 from services.factories.team_factory import TeamFactory
+from services.head_to_head_service import HeadToHeadService
 
 
 def get_leagues_mapping() -> Optional[dict[str, dict[str, str]]]:
@@ -135,12 +137,26 @@ def main():
         # options_args= [EdgeOptionArguments.HEADLESS]
     )
 
-    matches_url = FixturesURLFactory(browser, config).get_fixtures_urls()
-    print("Found a number of matches: ", len(matches_url))
+    # matches_url = FixturesURLFactory(browser, config).get_fixtures_urls()
+    # print("Found a number of matches: ", len(matches_url))
 
     team_factory = TeamFactory(browser)
-    match_instance = MatchFactory(browser, team_factory).create_match(matches_url[0])
-    print("Match instance: ", match_instance)
+    match_instance = MatchFactory(browser, team_factory).create_match(
+        "https://www.flashscore.com/match/82qTWLi3/#/h2h/overall"
+    )
+    played_match_factory = PlayedMatchFactory(browser, team_factory)
+    h2h_service = HeadToHeadService(browser, played_match_factory)
+
+    h2h = h2h_service.get_head_to_head(
+        "https://www.flashscore.com/match/82qTWLi3/#/h2h/overall",
+        match_instance.home_team,
+        match_instance.away_team,
+    )
+    for match in h2h.matches:
+        print(
+            f"Home: {match.home_team.name} {match.home_score} - {match.away_score} {match.away_team.name}"
+        )
+
     browser.quit()
 
 
