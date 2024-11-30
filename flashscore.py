@@ -152,10 +152,6 @@ def main():
         match_instance.home_team,
         match_instance.away_team,
     )
-    for match in h2h.matches:
-        print(
-            f"Home: {match.home_team.name} {match.home_score} - {match.away_score} {match.away_team.name}"
-        )
 
     browser.quit()
 

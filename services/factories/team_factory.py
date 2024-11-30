@@ -5,6 +5,7 @@ from selenium.common.exceptions import WebDriverException
 
 from browsers.base_browser import BaseBrowser, LocatorType
 from models.team import Team
+from services.team_cache import TeamCache
 
 
 class TeamFactory:
@@ -15,9 +16,16 @@ class TeamFactory:
     COUNTRY_SELECTOR = '//*[@id="mc"]/div[5]/div[1]/h2/a[2]'
     STADIUM_INFO_SELECTOR = '//*[@id="mc"]/div[5]/div[1]/div[2]/div[2]'
 
-    def __init__(self, browser: BaseBrowser):
-        """Initialize the factory with a browser instance."""
+    def __init__(self, browser: BaseBrowser, cache: Optional[TeamCache] = None):
+        """
+        Initialize the factory with a browser instance and optional cache.
+
+        Args:
+            browser: Browser instance for web interactions
+            cache: Optional TeamCache instance for caching teams
+        """
         self.browser = browser
+        self.cache = cache or TeamCache()
         self.logger = logging.getLogger(__name__)
 
     def create_team_with_context(
@@ -34,15 +42,26 @@ class TeamFactory:
             Team object if extraction successful, None otherwise
         """
         try:
-            team = self.create_team(team_url)
+            # Check cache first
+            cached_team = self.cache.get_by_url(team_url)
+            if cached_team:
+                self.logger.info(f"Team found in cache: {cached_team.name}")
+                return cached_team
+
+            # If not in cache, create new team
+            team = self._create_team(team_url)
+            if team:
+                self.cache.add_team(team)
+
             self.browser.restore_url(return_url)
             return team
+
         except Exception as e:
             self.logger.error(f"Error creating team object with context: {str(e)}")
             self.browser.restore_url(return_url)
             return None
 
-    def create_team(self, team_url: str) -> Optional[Team]:
+    def _create_team(self, team_url: str) -> Optional[Team]:
         """
         Create a Team instance with full details from the team's page.
 
