@@ -107,6 +107,25 @@ class HeadToHeadService:
             True if navigation successful, False otherwise
         """
         try:
+
+            # Check if H2H tab is the 3rd or 4th child
+            h2h_tab_selector = None
+            for nth_child in range(3, 5):
+                selector = f"#detail > div.detailOver > div > a:nth-child({nth_child}) > button"
+                element = self.browser.find_element(
+                    LocatorType.CSS_SELECTOR,
+                    selector,
+                    suppress_exception=True,
+                )
+                if element and element.is_displayed() and "H2H" in element.text:
+                    h2h_tab_selector = selector
+                    break
+
+            if not h2h_tab_selector:
+                return False
+
+            self.H2H_PAGE_BUTTON_SELECTOR = h2h_tab_selector
+
             # Click on H2H tab
             if not self.browser.click_element(
                 LocatorType.CSS_SELECTOR,

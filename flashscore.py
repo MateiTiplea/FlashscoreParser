@@ -153,6 +153,9 @@ def main():
         match_instance.away_team,
     )
 
+    print(h2h.get_team_record(match_instance.home_team))
+    print(h2h.get_team_record(match_instance.away_team))
+
     browser.quit()
 
 
