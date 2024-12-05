@@ -1,16 +1,14 @@
 # Location: services/factories/played_match_factory.py
 
-import logging
 import time
-from datetime import datetime
 from typing import Optional, Tuple
 
 from selenium.common.exceptions import TimeoutException, WebDriverException
 
 from browsers.base_browser import BaseBrowser, LocatorType
+from logging_config import get_logger
 from models.match_statistics import MatchStatistics
 from models.played_match import PlayedMatch
-from models.team import Team
 from services.factories.match_factory import MatchFactory
 from services.factories.team_factory import TeamFactory
 
@@ -35,7 +33,7 @@ class PlayedMatchFactory(MatchFactory):
     def __init__(self, browser: BaseBrowser, team_factory: TeamFactory):
         """Initialize with browser and team factory instances."""
         super().__init__(browser, team_factory)
-        self.logger = logging.getLogger(__name__)
+        self.logger = get_logger(__name__)
 
     def create_played_match(self, match_url: str) -> Optional[PlayedMatch]:
         """

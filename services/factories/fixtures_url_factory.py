@@ -1,18 +1,17 @@
 # Location: services/factories/fixtures_url_factory.py
 
 import json
-import logging
-import os
 import time
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from selenium.common.exceptions import TimeoutException, WebDriverException
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 from browsers.base_browser import BaseBrowser, LocatorType
+from logging_config import get_logger
 from models.config import Config
 
 
@@ -48,7 +47,7 @@ class FixturesURLFactory:
         """
         self.browser = browser
         self.config = config
-        self.logger = logging.getLogger(__name__)
+        self.logger = get_logger(__name__)
         self.league_url_mapping = self._load_league_mapping()
 
         if not self._validate_config():
@@ -238,7 +237,9 @@ class FixturesURLFactory:
         """
         possible_cookie_selector = "#onetrust-accept-btn-handler"
         if not self.browser.is_element_present(
-            LocatorType.CSS_SELECTOR, possible_cookie_selector, suppress_exception=True
+            LocatorType.CSS_SELECTOR,
+            possible_cookie_selector,
+            # suppress_exception=True
         ):
             return True
 
@@ -264,7 +265,7 @@ class FixturesURLFactory:
         if not self.browser.is_element_present(
             locator_type=LocatorType.CSS_SELECTOR,
             locator_value=fixtures_table_css_locator,
-            suppress_exception=True,
+            # suppress_exception=True,
         ):
             self.logger.error("Fixtures table not found on the page")
             return None
@@ -272,7 +273,7 @@ class FixturesURLFactory:
         return self.browser.find_element(
             locator_type=LocatorType.CSS_SELECTOR,
             locator_value=fixtures_table_css_locator,
-            suppress_exception=True,
+            # suppress_exception=True,
         )
 
     def _check_show_more_button_exists(self, table: WebElement) -> bool:

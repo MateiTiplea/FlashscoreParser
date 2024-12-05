@@ -1,17 +1,23 @@
 import argparse
 import json
 import os
+import time
+from pathlib import Path
 from typing import Optional
 
 from browsers.base_browser import BaseBrowser
 from browsers.browser_factory import BrowserFactory, BrowserType
 from browsers.edge_browser import EdgeOptionArguments
 from models.config import Config
+from services.data_extraction_coordinator import DataExtractionCoordinator
+from services.factories.fixture_match_factory import FixtureMatchFactory
 from services.factories.fixtures_url_factory import FixturesURLFactory
 from services.factories.match_factory import MatchFactory
 from services.factories.played_match_factory import PlayedMatchFactory
 from services.factories.team_factory import TeamFactory
 from services.head_to_head_service import HeadToHeadService
+from services.json_serialization_service import JsonSerializationService
+from services.team_form_service import TeamFormService
 
 
 def get_leagues_mapping() -> Optional[dict[str, dict[str, str]]]:
@@ -137,24 +143,17 @@ def main():
         # options_args= [EdgeOptionArguments.HEADLESS]
     )
 
-    # matches_url = FixturesURLFactory(browser, config).get_fixtures_urls()
-    # print("Found a number of matches: ", len(matches_url))
+    browser.open_url("https://www.flashscore.com/")
+    time.sleep(2)
 
-    team_factory = TeamFactory(browser)
-    match_instance = MatchFactory(browser, team_factory).create_match(
-        "https://www.flashscore.com/match/82qTWLi3/#/h2h/overall"
-    )
-    played_match_factory = PlayedMatchFactory(browser, team_factory)
-    h2h_service = HeadToHeadService(browser, played_match_factory)
+    coordinator = DataExtractionCoordinator(browser, config)
+    serializer = JsonSerializationService(Path("output"))
 
-    h2h = h2h_service.get_head_to_head(
-        "https://www.flashscore.com/match/82qTWLi3/#/h2h/overall",
-        match_instance.home_team,
-        match_instance.away_team,
-    )
+    # Extract data
+    fixtures, errors = coordinator.extract_fixtures_data()
 
-    print(h2h.get_team_record(match_instance.home_team))
-    print(h2h.get_team_record(match_instance.away_team))
+    # Serialize results
+    # serializer.serialize_fixtures_data(fixtures, errors)
 
     browser.quit()
 

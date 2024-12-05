@@ -1,4 +1,3 @@
-import logging
 from enum import Enum
 from typing import Any, List, Optional, Tuple, Union
 
@@ -9,9 +8,7 @@ from browsers.base_browser import (
     DEFAULT_WINDOW_WIDTH,
     BaseBrowser,
 )
-from settings import LOGGING_LEVEL
-
-logging.basicConfig(level=LOGGING_LEVEL)
+from logging_config import get_logger
 
 
 class ChromeOptionArguments(Enum):
@@ -46,6 +43,7 @@ class ChromeBrowser(BaseBrowser):
                         For simple flags, use ChromeOptionArguments alone
                         For options requiring values (like window size), use (ChromeOptionArguments, value) tuple
         """
+        self.logger = get_logger(__name__)
         chrome_options = ChromeOptions()
 
         # Add logging control options
@@ -79,4 +77,4 @@ class ChromeBrowser(BaseBrowser):
         # Call parent class constructor
         super().__init__(driver=driver)
 
-        logging.info("Chrome browser initialized successfully.")
+        self.logger.info("Chrome browser initialized successfully.")

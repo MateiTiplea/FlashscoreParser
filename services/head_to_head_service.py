@@ -1,14 +1,11 @@
 # Location: services/head_to_head_service.py
 
-import logging
-import time
 from typing import List, Optional
 
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 from browsers.base_browser import BaseBrowser, LocatorType
+from logging_config import get_logger
 from models.head_to_head import HeadToHead
 from models.team import Team
 from services.factories.played_match_factory import PlayedMatchFactory
@@ -47,7 +44,7 @@ class HeadToHeadService:
         self.browser = browser
         self.played_match_factory = played_match_factory
         self.max_matches = max_matches
-        self.logger = logging.getLogger(__name__)
+        self.logger = get_logger(__name__)
 
     def get_head_to_head(
         self, match_url: str, team_a: Team, team_b: Team
@@ -115,7 +112,7 @@ class HeadToHeadService:
                 element = self.browser.find_element(
                     LocatorType.CSS_SELECTOR,
                     selector,
-                    suppress_exception=True,
+                    # suppress_exception=True,
                 )
                 if element and element.is_displayed() and "H2H" in element.text:
                     h2h_tab_selector = selector
@@ -130,7 +127,7 @@ class HeadToHeadService:
             if not self.browser.click_element(
                 LocatorType.CSS_SELECTOR,
                 self.H2H_PAGE_BUTTON_SELECTOR,
-                suppress_exception=True,
+                # suppress_exception=True,
             ):
                 return False
 
@@ -138,7 +135,7 @@ class HeadToHeadService:
             h2h_section = self.browser.find_element(
                 LocatorType.CSS_SELECTOR,
                 self.MATCH_LIST_SELECTOR,
-                suppress_exception=True,
+                # suppress_exception=True,
             )
             return h2h_section is not None
 
@@ -204,7 +201,7 @@ class HeadToHeadService:
             rows = self.browser.find_elements(
                 LocatorType.CSS_SELECTOR,
                 f"{self.H2H_ENCAPSULATED_SELECTOR} > {self.MATCH_ROW_SELECTOR}",
-                suppress_exception=True,
+                # suppress_exception=True,
             )
 
             for row in rows:
@@ -232,7 +229,7 @@ class HeadToHeadService:
                 show_more = self.browser.find_element(
                     LocatorType.CSS_SELECTOR,
                     self.SHOW_MORE_BUTTON_SELECTOR,
-                    suppress_exception=True,
+                    # suppress_exception=True,
                 )
                 if not show_more or not show_more.is_displayed():
                     break
@@ -241,7 +238,7 @@ class HeadToHeadService:
                 if not self.browser.click_element(
                     LocatorType.CSS_SELECTOR,
                     self.SHOW_MORE_BUTTON_SELECTOR,
-                    suppress_exception=True,
+                    # suppress_exception=True,
                 ):
                     break
 
@@ -254,7 +251,7 @@ class HeadToHeadService:
             matches = self.browser.find_elements(
                 LocatorType.CSS_SELECTOR,
                 f"{self.H2H_ENCAPSULATED_SELECTOR} > {self.MATCH_ROW_SELECTOR}",
-                suppress_exception=True,
+                # suppress_exception=True,
             )
             return matches or []
         except Exception:

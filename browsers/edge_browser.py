@@ -1,4 +1,3 @@
-import logging
 from enum import Enum
 from typing import Any, List, Optional, Tuple, Union
 
@@ -9,9 +8,7 @@ from browsers.base_browser import (
     DEFAULT_WINDOW_WIDTH,
     BaseBrowser,
 )
-from settings import LOGGING_LEVEL
-
-logging.basicConfig(level=LOGGING_LEVEL)
+from logging_config import get_logger
 
 
 class EdgeOptionArguments(Enum):
@@ -46,6 +43,7 @@ class EdgeBrowser(BaseBrowser):
                         For simple flags, use EdgeOptionArguments alone
                         For options requiring values (like window size), use (EdgeOptionArguments, value) tuple
         """
+        self.logger = get_logger(__name__)
         edge_options = EdgeOptions()
 
         # Add logging control options
@@ -79,4 +77,4 @@ class EdgeBrowser(BaseBrowser):
         # Call parent class constructor
         super().__init__(driver=driver)
 
-        logging.info("Edge browser initialized successfully.")
+        self.logger.info("Edge browser initialized successfully.")

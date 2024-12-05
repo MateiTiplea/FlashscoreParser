@@ -1,9 +1,10 @@
-from logging import INFO
 from typing import Optional
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-LOGGING_LEVEL = INFO
+from logging_config import setup_logging
+
+setup_logging()
 GLOBAL_DRIVER: Optional[WebDriver] = None
 
 

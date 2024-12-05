@@ -1,13 +1,13 @@
 # Location: services/factories/match_factory.py
 
-import logging
 from datetime import datetime
 from typing import Optional, Tuple
 
-from selenium.common.exceptions import TimeoutException, WebDriverException
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
 
 from browsers.base_browser import BaseBrowser, LocatorType
+from logging_config import get_logger
 from models.match import Match
 from models.match_status import MatchStatus
 from models.team import Team
@@ -37,7 +37,7 @@ class MatchFactory:
         """
         self.browser = browser
         self.team_factory = team_factory
-        self.logger = logging.getLogger(__name__)
+        self.logger = get_logger(__name__)
 
     def create_match(self, match_url: str) -> Optional[Match]:
         """
@@ -238,7 +238,9 @@ class MatchFactory:
         """
         possible_cookie_selector = "#onetrust-accept-btn-handler"
         if not self.browser.is_element_present(
-            LocatorType.CSS_SELECTOR, possible_cookie_selector, suppress_exception=True
+            LocatorType.CSS_SELECTOR,
+            possible_cookie_selector,
+            # suppress_exception=True
         ):
             return True
 

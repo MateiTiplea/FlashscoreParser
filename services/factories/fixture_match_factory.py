@@ -1,9 +1,9 @@
 # Location: services/factories/fixture_match_factory.py
 
-import logging
 from typing import Optional
 
 from browsers.base_browser import BaseBrowser
+from logging_config import get_logger
 from models.fixture_match import FixtureMatch
 from models.head_to_head import HeadToHead
 from models.team_form import TeamForm
@@ -38,7 +38,7 @@ class FixtureMatchFactory(MatchFactory):
         super().__init__(browser, team_factory)
         self.team_form_service = team_form_service
         self.h2h_service = h2h_service
-        self.logger = logging.getLogger(__name__)
+        self.logger = get_logger(__name__)
 
     def create_fixture_match(self, match_url: str) -> Optional[FixtureMatch]:
         """
@@ -61,7 +61,9 @@ class FixtureMatchFactory(MatchFactory):
             away_form = self._get_team_form(base_match.away_team)
 
             # Extract head-to-head data
-            h2h = self._get_head_to_head(base_match.home_team, base_match.away_team)
+            h2h = self._get_head_to_head(
+                match_url, base_match.home_team, base_match.away_team
+            )
 
             # Create fixture match
             return FixtureMatch.create(
@@ -97,7 +99,9 @@ class FixtureMatchFactory(MatchFactory):
             self.logger.error(f"Error getting form for team {team.name}: {str(e)}")
             return None
 
-    def _get_head_to_head(self, home_team, away_team) -> Optional[HeadToHead]:
+    def _get_head_to_head(
+        self, match_url, home_team, away_team
+    ) -> Optional[HeadToHead]:
         """
         Get head-to-head data using HeadToHeadService.
 
@@ -109,7 +113,7 @@ class FixtureMatchFactory(MatchFactory):
             HeadToHead object if available, None otherwise
         """
         try:
-            return self.h2h_service.get_head_to_head(home_team, away_team)
+            return self.h2h_service.get_head_to_head(match_url, home_team, away_team)
         except Exception as e:
             self.logger.error(
                 f"Error getting H2H for {home_team.name} vs {away_team.name}: {str(e)}"

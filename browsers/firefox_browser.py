@@ -1,4 +1,3 @@
-import logging
 from enum import Enum
 from typing import Any, List, Optional, Tuple, Union
 
@@ -9,9 +8,7 @@ from browsers.base_browser import (
     DEFAULT_WINDOW_WIDTH,
     BaseBrowser,
 )
-from settings import LOGGING_LEVEL
-
-logging.basicConfig(level=LOGGING_LEVEL)
+from logging_config import get_logger
 
 
 class FirefoxOptionArguments(Enum):
@@ -46,6 +43,8 @@ class FirefoxBrowser(BaseBrowser):
                         For simple flags, use FirefoxOptionArguments alone
                         For options requiring values (like window size), use (FirefoxOptionArguments, value) tuple
         """
+        self.logger = get_logger(__name__)
+
         firefox_options = FirefoxOptions()
 
         # Add logging control options - Firefox uses slightly different logging mechanism
@@ -81,4 +80,4 @@ class FirefoxBrowser(BaseBrowser):
         # Call parent class constructor
         super().__init__(driver=driver)
 
-        logging.info("Firefox browser initialized successfully.")
+        self.logger.info("Firefox browser initialized successfully.")

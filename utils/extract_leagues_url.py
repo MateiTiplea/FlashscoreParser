@@ -49,25 +49,25 @@ def get_leagues_from_country(browser: BaseBrowser, country_url: str) -> dict[str
         locator_type=LocatorType.CSS_SELECTOR,
         locator_value=possible_cookie_selector,
         timeout=2,  # Short timeout since we're trying multiple selectors
-        suppress_exception=True,
+        # suppress_exception=True,
     ):
         cookie_button = browser.find_element(
             locator_type=LocatorType.CSS_SELECTOR,
             locator_value=possible_cookie_selector,
             timeout=2,  # Short timeout since we're trying multiple selectors
-            suppress_exception=True,
+            # suppress_exception=True,
         )
         if cookie_button:
             browser.click_element(
                 locator_type=LocatorType.CSS_SELECTOR,
                 locator_value=possible_cookie_selector,
-                suppress_exception=True,
+                # suppress_exception=True,
             )
             # Wait for banner to disappear
             browser.wait_for_element_to_disappear(
                 locator_type=LocatorType.ID,
                 locator_value="#onetrust-banner-sdk",
-                suppress_exception=True,
+                # suppress_exception=True,
             )
 
     leagues = dict()
@@ -86,7 +86,7 @@ def get_leagues_from_country(browser: BaseBrowser, country_url: str) -> dict[str
         locator_type=LocatorType.CSS_SELECTOR,
         locator_value="div.selected-country-list div.show-more",
         timeout=1,
-        suppress_exception=True,
+        # suppress_exception=True,
     ):
         clicked = browser.click_element(
             locator_type=LocatorType.CSS_SELECTOR,

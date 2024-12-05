@@ -1,13 +1,7 @@
-import logging
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
-from selenium.common.exceptions import (
-    ElementNotInteractableException,
-    NoSuchElementException,
-    StaleElementReferenceException,
-    TimeoutException,
-)
+from selenium.common.exceptions import ElementNotInteractableException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
@@ -15,9 +9,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
-from settings import LOGGING_LEVEL, set_global_driver
+from logging_config import get_logger
+from settings import set_global_driver
 
-logging.basicConfig(level=LOGGING_LEVEL)
 DEFAULT_WINDOW_WIDTH = 1280
 DEFAULT_WINDOW_HEIGHT = 720
 DEFAULT_TIMEOUT = 10
@@ -39,6 +33,7 @@ class LocatorType(Enum):
 class BaseBrowser:
     def __init__(self, driver: WebDriver) -> None:
         self.driver: WebDriver = driver
+        self.logger = get_logger(__name__)
         set_global_driver(driver=self.driver)
 
     def open_url(self, url: str) -> None:
@@ -46,7 +41,7 @@ class BaseBrowser:
 
     def quit(self) -> None:
         self.driver.quit()
-        logging.info("Quit the driver and closed all associated windows.")
+        self.logger.info("Quit the driver and closed all associated windows.")
 
     def save_current_url(self) -> str:
         """
@@ -102,14 +97,14 @@ class BaseBrowser:
             return element
         except TimeoutException:
             if not suppress_exception:
-                logging.warning(
+                self.logger.warning(
                     f"Element not found with {locator_type.name}='{locator_value}' "
                     f"after {timeout} seconds"
                 )
             return None
         except Exception as e:
             if not suppress_exception:
-                logging.error(
+                self.logger.error(
                     f"Error finding element with {locator_type.name}='{locator_value}': {str(e)}"
                 )
             return None
@@ -152,14 +147,14 @@ class BaseBrowser:
             return elements
         except TimeoutException:
             if not suppress_exception:
-                logging.warning(
+                self.logger.warning(
                     f"No elements found with {locator_type.name}='{locator_value}' "
                     f"after {timeout} seconds"
                 )
             return []
         except Exception as e:
             if not suppress_exception:
-                logging.error(
+                self.logger.error(
                     f"Error finding elements with {locator_type.name}='{locator_value}': {str(e)}"
                 )
             return []
@@ -222,14 +217,14 @@ class BaseBrowser:
             return True
         except TimeoutException:
             if not suppress_exception:
-                logging.warning(
+                self.logger.warning(
                     f"Element with {locator_type.name}='{locator_value}' "
                     f"did not disappear after {timeout} seconds"
                 )
             return False
         except Exception as e:
             if not suppress_exception:
-                logging.error(
+                self.logger.error(
                     f"Error waiting for element disappearance with {locator_type.name}"
                     f"='{locator_value}': {str(e)}"
                 )
@@ -310,7 +305,9 @@ class BaseBrowser:
                 return True
             return False
         except ElementNotInteractableException:
-            logging.error(f"Element not interactable: {locator_type}='{locator_value}'")
+            self.logger.error(
+                f"Element not interactable: {locator_type}='{locator_value}'"
+            )
             return False
 
     def input_text(
@@ -346,7 +343,9 @@ class BaseBrowser:
                 return True
             return False
         except ElementNotInteractableException:
-            logging.error(f"Element not interactable: {locator_type}='{locator_value}'")
+            self.logger.error(
+                f"Element not interactable: {locator_type}='{locator_value}'"
+            )
             return False
 
     def select_dropdown_option(
@@ -382,12 +381,14 @@ class BaseBrowser:
                 elif option_value:
                     select.select_by_value(option_value)
                 else:
-                    logging.error("Either option_text or option_value must be provided")
+                    self.logger.error(
+                        "Either option_text or option_value must be provided"
+                    )
                     return False
                 return True
             return False
         except Exception as e:
-            logging.error(f"Error selecting dropdown option: {str(e)}")
+            self.logger.error(f"Error selecting dropdown option: {str(e)}")
             return False
 
     def get_element_state(
@@ -522,5 +523,5 @@ class BaseBrowser:
             return False
 
         except Exception as e:
-            logging.error(f"Error handling overlay and clicking element: {str(e)}")
+            self.logger.error(f"Error handling overlay and clicking element: {str(e)}")
             return False

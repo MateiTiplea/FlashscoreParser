@@ -1,9 +1,9 @@
-import logging
 from typing import Optional
 
 from selenium.common.exceptions import WebDriverException
 
 from browsers.base_browser import BaseBrowser, LocatorType
+from logging_config import get_logger
 from models.team import Team
 from services.team_cache import TeamCache
 
@@ -26,7 +26,7 @@ class TeamFactory:
         """
         self.browser = browser
         self.cache = cache or TeamCache()
-        self.logger = logging.getLogger(__name__)
+        self.logger = get_logger(__name__)
 
     def create_team_with_context(
         self, team_url: str, return_url: str
@@ -102,14 +102,18 @@ class TeamFactory:
     def _extract_team_name(self) -> Optional[str]:
         """Extract team name from the page."""
         element = self.browser.find_element(
-            LocatorType.XPATH, self.TEAM_NAME_SELECTOR, suppress_exception=True
+            LocatorType.XPATH,
+            self.TEAM_NAME_SELECTOR,
+            # suppress_exception=True
         )
         return element.text if element else None
 
     def _extract_country(self) -> Optional[str]:
         """Extract team's country from the page."""
         element = self.browser.find_element(
-            LocatorType.XPATH, self.COUNTRY_SELECTOR, suppress_exception=True
+            LocatorType.XPATH,
+            self.COUNTRY_SELECTOR,
+            # suppress_exception=True
         )
         return element.text.title() if element else None
 
@@ -120,7 +124,7 @@ class TeamFactory:
         element = self.browser.find_element(
             LocatorType.XPATH,
             self.STADIUM_INFO_SELECTOR,
-            suppress_exception=True,
+            # suppress_exception=True,
         )
         if not element:
             return None, None, None
