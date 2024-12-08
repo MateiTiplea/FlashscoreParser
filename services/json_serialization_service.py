@@ -5,6 +5,7 @@ from typing import Any, Dict, List
 from logging_config import get_logger
 from models.fixture_match import FixtureMatch
 from models.head_to_head import HeadToHead
+from models.match_statistics import MatchStatistics
 from models.played_match import PlayedMatch
 from models.team import Team
 from models.team_form import TeamForm
@@ -77,7 +78,7 @@ class JsonSerializationService:
             Dictionary representation of the fixture
         """
         return {
-            "match_id": str(fixture.match_id),
+            # "match_id": str(fixture.match_id),
             "match_url": fixture.match_url,
             "country": fixture.country,
             "competition": fixture.competition,
@@ -106,7 +107,7 @@ class JsonSerializationService:
     def _serialize_team(self, team: Team) -> Dict[str, Any]:
         """Serialize Team object."""
         return {
-            "team_id": str(team.team_id),
+            # "team_id": str(team.team_id),
             "name": team.name,
             "team_url": team.team_url,
             "country": team.country,
@@ -118,7 +119,7 @@ class JsonSerializationService:
     def _serialize_team_form(self, form: TeamForm) -> Dict[str, Any]:
         """Serialize TeamForm object."""
         return {
-            "form_id": str(form.form_id),
+            # "form_id": str(form.form_id),
             "team": self._serialize_team(form.team),
             "matches": [self._serialize_played_match(match) for match in form.matches],
             "period_start": form.period_start.isoformat(),
@@ -135,7 +136,7 @@ class JsonSerializationService:
     def _serialize_head_to_head(self, h2h: HeadToHead) -> Dict[str, Any]:
         """Serialize HeadToHead object."""
         return {
-            "h2h_id": str(h2h.h2h_id),
+            # "h2h_id": str(h2h.h2h_id),
             "team_a": self._serialize_team(h2h.team_a),
             "team_b": self._serialize_team(h2h.team_b),
             "matches": [self._serialize_played_match(match) for match in h2h.matches],
@@ -148,7 +149,7 @@ class JsonSerializationService:
     def _serialize_played_match(self, match: PlayedMatch) -> Dict[str, Any]:
         """Serialize PlayedMatch object."""
         return {
-            "match_id": str(match.match_id),
+            # "match_id": str(match.match_id),
             "match_url": match.match_url,
             "country": match.country,
             "competition": match.competition,
@@ -159,7 +160,51 @@ class JsonSerializationService:
             "status": match.status.name,
             "home_score": match.home_score,
             "away_score": match.away_score,
+            "statistics": (
+                self._serialize_match_statistics(match.statistics)
+                if match.statistics
+                else None
+            ),
         }
+
+    def _serialize_match_statistics(self, stats: MatchStatistics) -> Dict[str, Any]:
+        """Serialize MatchStatistics object."""
+        stats_dict = {
+            # "stats_id": str(stats.stats_id),
+            # "match_id": str(stats.match_id),
+            "expected_goals": stats.expected_goals,
+            "ball_possession": stats.ball_possession,
+            "goal_attempts": stats.goal_attempts,
+            "shots_on_goal": stats.shots_on_goal,
+            "shots_off_goal": stats.shots_off_goal,
+            "blocked_shots": stats.blocked_shots,
+            "big_chances": stats.big_chances,
+            "corner_kicks": stats.corner_kicks,
+            "shots_inside_box": stats.shots_inside_box,
+            "shots_outside_box": stats.shots_outside_box,
+            "hit_woodwork": stats.hit_woodwork,
+            "headed_goals": stats.headed_goals,
+            "goalkeeper_saves": stats.goalkeeper_saves,
+            "free_kicks": stats.free_kicks,
+            "offsides": stats.offsides,
+            "fouls": stats.fouls,
+            "yellow_cards": stats.yellow_cards,
+            "red_cards": stats.red_cards,
+            "throw_ins": stats.throw_ins,
+            "touches_in_opposition_box": stats.touches_in_opposition_box,
+            "total_passes": stats.total_passes,
+            "completed_passes": stats.completed_passes,
+            "total_passes_in_final_third": stats.total_passes_in_final_third,
+            "completed_passes_in_final_third": stats.completed_passes_in_final_third,
+            "total_crosses": stats.total_crosses,
+            "completed_crosses": stats.completed_crosses,
+            "total_tackles": stats.total_tackles,
+            "won_tackles": stats.won_tackles,
+            "clearances": stats.clearances,
+            "interceptions": stats.interceptions,
+        }
+        # Remove None values to keep JSON clean
+        return {k: v for k, v in stats_dict.items() if v is not None}
 
     def _write_json(self, data: Any, filename: str) -> None:
         """

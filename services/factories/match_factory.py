@@ -119,6 +119,9 @@ class MatchFactory:
             if len(parts) == 2:
                 country, competition = parts[0].split(": ")
                 return (country.strip(), competition.strip(), parts[1].strip())
+            elif len(parts) == 1:
+                country, competition = parts[0].split(": ")
+                return (country.strip(), competition.strip(), "")
             else:
                 return ("", "", "")
         except Exception as e:

@@ -153,7 +153,7 @@ def main():
     fixtures, errors = coordinator.extract_fixtures_data()
 
     # Serialize results
-    # serializer.serialize_fixtures_data(fixtures, errors)
+    serializer.serialize_fixtures_data(fixtures, errors)
 
     browser.quit()
 

@@ -10,16 +10,16 @@ from models.team import Team
 from models.team_form import TeamForm
 
 
-@dataclass
+@dataclass(init=True)
 class FixtureMatch(Match):
     """
     Represents an upcoming football match with form and head-to-head data.
     Extends the base Match class with additional predictive information.
     """
 
-    home_team_form: Optional[TeamForm]
-    away_team_form: Optional[TeamForm]
-    head_to_head: Optional[HeadToHead]
+    home_team_form: Optional[TeamForm] = None
+    away_team_form: Optional[TeamForm] = None
+    head_to_head: Optional[HeadToHead] = None
 
     @classmethod
     def create(
@@ -54,7 +54,7 @@ class FixtureMatch(Match):
             A new FixtureMatch instance
         """
         # Create base match first
-        match = super().create(
+        base_match = super().create(
             match_url=match_url,
             country=country,
             competition=competition,
@@ -64,17 +64,17 @@ class FixtureMatch(Match):
             away_team=away_team,
         )
 
-        # Add fixture-specific fields
+        # Return new FixtureMatch with all fields
         return cls(
-            match_id=match.match_id,
-            match_url=match.match_url,
-            country=match.country,
-            competition=match.competition,
-            match_date=match.match_date,
-            round=match.round,
-            home_team=match.home_team,
-            away_team=match.away_team,
-            status=match.status,
+            match_id=base_match.match_id,
+            match_url=base_match.match_url,
+            country=base_match.country,
+            competition=base_match.competition,
+            match_date=base_match.match_date,
+            round=base_match.round,
+            home_team=base_match.home_team,
+            away_team=base_match.away_team,
+            status=base_match.status,
             home_team_form=home_team_form,
             away_team_form=away_team_form,
             head_to_head=head_to_head,
