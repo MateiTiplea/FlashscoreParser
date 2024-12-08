@@ -1,8 +1,14 @@
 # Location: models/match_statistics.py
 
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, TypedDict
 from uuid import UUID, uuid4
+
+
+class Statistic(TypedDict):
+    home: str | int | float
+    away: str | int | float
 
 
 @dataclass
@@ -13,64 +19,63 @@ class MatchStatistics:
     match_id: UUID
 
     #  Expected goals (xG)
-    home_expected_goals: Optional[float] = None
-    away_expected_goals: Optional[float] = None
+    expected_goals: Optional[Statistic] = None
 
     # Ball possession (as integer percentage)
-    home_possession: Optional[int] = None
-    away_possession: Optional[int] = None
+    ball_possession: Optional[Statistic] = None
 
     # Shots
-    home_shots_total: Optional[int] = None
-    away_shots_total: Optional[int] = None
-    home_shots_on_target: Optional[int] = None
-    away_shots_on_target: Optional[int] = None
-    home_shots_off_target: Optional[int] = None
-    away_shots_off_target: Optional[int] = None
-    home_shots_blocked: Optional[int] = None
-    away_shots_blocked: Optional[int] = None
+    goal_attempts: Optional[Statistic] = None
+    shots_on_goal: Optional[Statistic] = None
+    shots_off_goal: Optional[Statistic] = None
+    blocked_shots: Optional[Statistic] = None
+
+    #  Big chances
+    big_chances: Optional[Statistic] = None
+
+    corner_kicks: Optional[Statistic] = None
+    shots_inside_box: Optional[Statistic] = None
+    shots_outside_box: Optional[Statistic] = None
+    hit_woodwork: Optional[Statistic] = None
+
+    headed_goals: Optional[Statistic] = None
+
+    goalkeeper_saves: Optional[Statistic] = None
 
     #  Free kicks
-    home_free_kicks: Optional[int] = None
-    away_free_kicks: Optional[int] = None
-
-    # Set pieces
-    home_corners: Optional[int] = None
-    away_corners: Optional[int] = None
+    free_kicks: Optional[Statistic] = None
 
     #  Offsides
-    home_offsides: Optional[int] = None
-    away_offsides: Optional[int] = None
-
-    #  Throw-ins
-    home_throw_ins: Optional[int] = None
-    away_throw_ins: Optional[int] = None
-
-    #  Goalkeeper saves
-    home_goalkeeper_saves: Optional[int] = None
-    away_goalkeeper_saves: Optional[int] = None
+    offsides: Optional[Statistic] = None
 
     # Fouls and cards
-    home_fouls: Optional[int] = None
-    away_fouls: Optional[int] = None
-    home_yellow_cards: Optional[int] = None
-    away_yellow_cards: Optional[int] = None
-    home_red_cards: Optional[int] = None
-    away_red_cards: Optional[int] = None
+    fouls: Optional[Statistic] = None
+    yellow_cards: Optional[Statistic] = None
+    red_cards: Optional[Statistic] = None
+    #  Throw-ins
+    throw_ins: Optional[Statistic] = None
+
+    touches_in_opposition_box: Optional[Statistic] = None
 
     #  Passes
-    home_total_passes: Optional[int] = None
-    away_total_passes: Optional[int] = None
-    home_completed_passes: Optional[int] = None
-    away_completed_passes: Optional[int] = None
+    total_passes: Optional[Statistic] = None
+    completed_passes: Optional[Statistic] = None
+    total_passes_in_final_third: Optional[Statistic] = None
+    completed_passes_in_final_third: Optional[Statistic] = None
 
     #  Crosses
-    home_crosses: Optional[int] = None
-    away_crosses: Optional[int] = None
+    total_crosses: Optional[Statistic] = None
+    completed_crosses: Optional[Statistic] = None
+
+    #  Tackles
+    total_tackles: Optional[Statistic] = None
+    won_tackles: Optional[Statistic] = None
+
+    #  Clearances
+    clearances: Optional[Statistic] = None
 
     #  Interceptions
-    home_interceptions: Optional[int] = None
-    away_interceptions: Optional[int] = None
+    interceptions: Optional[Statistic] = None
 
     @classmethod
     def create(cls, match_id: UUID, **statistics) -> "MatchStatistics":

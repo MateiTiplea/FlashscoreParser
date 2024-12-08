@@ -240,7 +240,8 @@ class MatchFactory:
         if not self.browser.is_element_present(
             LocatorType.CSS_SELECTOR,
             possible_cookie_selector,
-            # suppress_exception=True
+            timeout=2,
+            suppress_exception=True,
         ):
             return True
 

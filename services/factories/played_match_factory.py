@@ -126,6 +126,15 @@ class PlayedMatchFactory(MatchFactory):
                 LocatorType.CSS_SELECTOR, self.STATS_BUTTON_SELECTOR
             )
             if not stats_button:
+                self.logger.error(
+                    "Statistics button not found. Cannot extract further statistics for match."
+                )
+                return False
+
+            if "stats" not in stats_button.text.lower():
+                self.logger.error(
+                    "Invalid statistics button text. Cannot extract further statistics for match."
+                )
                 return False
 
             stats_button.click()
@@ -160,42 +169,36 @@ class PlayedMatchFactory(MatchFactory):
             # Initialize statistics dictionary
             stats_data = {
                 "match_id": match_id,
-                "home_expected_goals": None,
-                "away_expected_goals": None,
-                "home_possession": None,
-                "away_possession": None,
-                "home_shots_total": None,
-                "away_shots_total": None,
-                "home_shots_on_target": None,
-                "away_shots_on_target": None,
-                "home_shots_off_target": None,
-                "away_shots_off_target": None,
-                "home_shots_blocked": None,
-                "away_shots_blocked": None,
-                "home_free_kicks": None,
-                "away_free_kicks": None,
-                "home_corners": None,
-                "away_corners": None,
-                "home_offsides": None,
-                "away_offsides": None,
-                "home_throw_ins": None,
-                "away_throw_ins": None,
-                "home_goalkeeper_saves": None,
-                "away_goalkeeper_saves": None,
-                "home_fouls": None,
-                "away_fouls": None,
-                "home_yellow_cards": None,
-                "away_yellow_cards": None,
-                "home_red_cards": None,
-                "away_red_cards": None,
-                "home_total_passes": None,
-                "away_total_passes": None,
-                "home_completed_passes": None,
-                "away_completed_passes": None,
-                "home_crosses": None,
-                "away_crosses": None,
-                "home_interceptions": None,
-                "away_interceptions": None,
+                "expected_goals": None,
+                "ball_possession": None,
+                "goal_attempts": None,
+                "shots_on_goal": None,
+                "shots_off_goal": None,
+                "blocked_shots": None,
+                "big_chances": None,
+                "corner_kicks": None,
+                "shots_inside_box": None,
+                "shots_outside_box": None,
+                "hit_woodwork": None,
+                "headed_goals": None,
+                "goalkeeper_saves": None,
+                "free_kicks": None,
+                "offsides": None,
+                "fouls": None,
+                "yellow_cards": None,
+                "red_cards": None,
+                "throw_ins": None,
+                "touches_in_opposition_box": None,
+                "total_passes": None,
+                "completed_passes": None,
+                "total_passes_in_final_third": None,
+                "completed_passes_in_final_third": None,
+                "total_crosses": None,
+                "completed_crosses": None,
+                "total_tackles": None,
+                "won_tackles": None,
+                "clearances": None,
+                "interceptions": None,
             }
 
             # Extract all statistic rows
@@ -234,103 +237,73 @@ class PlayedMatchFactory(MatchFactory):
 
             # Map statistic name to dictionary keys
             mapping = {
-                "expected goals (xg)": (
-                    "home_expected_goals",
-                    "away_expected_goals",
-                    float,
+                "expected goals (xg)": ("expected_goals", float),
+                "ball possession": ("ball_possession", self._parse_percentage),
+                "goal attempts": ("goal_attempts", int),
+                "shots on goal": ("shots_on_goal", int),
+                "shots off goal": ("shots_off_goal", int),
+                "blocked shots": ("blocked_shots", int),
+                "big chances": ("big_chances", int),
+                "corner kicks": ("corner_kicks", int),
+                "shots inside the box": ("shots_inside_box", int),
+                "shots outside the box": ("shots_outside_box", int),
+                "hit the woodwork": ("hit_woodwork", int),
+                "headed goals": ("headed_goals", int),
+                "goalkeeper saves": ("goalkeeper_saves", int),
+                "free kicks": ("free_kicks", int),
+                "offsides": ("offsides", int),
+                "fouls": ("fouls", int),
+                "yellow cards": ("yellow_cards", int),
+                "red cards": ("red_cards", int),
+                "throw-ins": ("throw_ins", int),
+                "touches in the opposition box": ("touches_in_opposition_box", int),
+                "passes": (
+                    "total_passes",
+                    "completed_passes",
+                    self._process_compound_stat,
                 ),
-                "ball possession": (
-                    "home_possession",
-                    "away_possession",
-                    self._parse_percentage,
+                "passes in the final third": (
+                    "total_passes_in_final_third",
+                    "completed_passes_in_final_third",
+                    self._process_compound_stat,
                 ),
-                "goal attempts": (
-                    "home_shots_total",
-                    "away_shots_total",
-                    int,
+                "crosses": (
+                    "total_crosses",
+                    "completed_crosses",
+                    self._process_compound_stat,
                 ),
-                "shots on goal": (
-                    "home_shots_on_target",
-                    "away_shots_on_target",
-                    int,
+                "tackles": (
+                    "total_tackles",
+                    "won_tackles",
+                    self._process_compound_stat,
                 ),
-                "shots off goal": (
-                    "home_shots_off_target",
-                    "away_shots_off_target",
-                    int,
-                ),
-                "blocked shots": (
-                    "home_shots_blocked",
-                    "away_shots_blocked",
-                    int,
-                ),
-                "free kicks": (
-                    "home_free_kicks",
-                    "away_free_kicks",
-                    int,
-                ),
-                "corner kicks": (
-                    "home_corners",
-                    "away_corners",
-                    int,
-                ),
-                "offsides": (
-                    "home_offsides",
-                    "away_offsides",
-                    int,
-                ),
-                "throw-ins": (
-                    "home_throw_ins",
-                    "away_throw_ins",
-                    int,
-                ),
-                "goalkeeper saves": (
-                    "home_goalkeeper_saves",
-                    "away_goalkeeper_saves",
-                    int,
-                ),
-                "fouls": (
-                    "home_fouls",
-                    "away_fouls",
-                    int,
-                ),
-                "yellow cards": (
-                    "home_yellow_cards",
-                    "away_yellow_cards",
-                    int,
-                ),
-                "red cards": (
-                    "home_red_cards",
-                    "away_red_cards",
-                    int,
-                ),
-                "total passes": (
-                    "home_total_passes",
-                    "away_total_passes",
-                    int,
-                ),
-                "completed passes": (
-                    "home_completed_passes",
-                    "away_completed_passes",
-                    int,
-                ),
-                "crosses completed": (
-                    "home_crosses",
-                    "away_crosses",
-                    int,
-                ),
-                "interceptions": (
-                    "home_interceptions",
-                    "away_interceptions",
-                    int,
-                ),
+                "clearances total": ("clearances", int),
+                "interceptions": ("interceptions", int),
             }
 
             if stat_name in mapping:
-                home_key, away_key, converter = mapping[stat_name]
+                if len(mapping[stat_name]) == 2:
+                    total_key, converter = mapping[stat_name]
+                else:
+                    total_key, completed_key, converter = mapping[stat_name]
                 try:
-                    stats_data[home_key] = converter(home_value)
-                    stats_data[away_key] = converter(away_value)
+                    if converter == self._process_compound_stat:
+                        home_total, home_completed = converter(home_value)
+                        away_total, away_completed = converter(away_value)
+
+                        stats_data[total_key] = {
+                            "home": home_total,
+                            "away": away_total,
+                        }
+                        stats_data[completed_key] = {
+                            "home": home_completed,
+                            "away": away_completed,
+                        }
+                    else:
+                        stats_data[total_key] = {
+                            "home": converter(home_value),
+                            "away": converter(away_value),
+                        }
                 except (ValueError, TypeError):
                     self.logger.warning(
                         f"Failed to convert values for {stat_name}: {home_value}, {away_value}"
@@ -355,3 +328,33 @@ class PlayedMatchFactory(MatchFactory):
             return int(value.replace("%", ""))
         except (ValueError, AttributeError):
             return None
+
+    def _process_compound_stat(self, value: str) -> Tuple[Optional[int], Optional[int]]:
+        """
+        Process compound statistics in format "XX% (N/M)" where N is completed and M is total.
+        Example: "88% (522/592)" -> returns (592, 522) as (total, completed)
+
+        Args:
+            value: String containing compound stat (e.g., "88% (522/592)")
+
+        Returns:
+            Tuple of (total, completed) integers
+        """
+        try:
+            # Extract content within parentheses and split on '/'
+            start = value.find("(") + 1
+            end = value.find(")")
+            if start == -1 or end == -1:
+                return None, None
+
+            numbers = value[start:end].split("/")
+            if len(numbers) != 2:
+                return None, None
+
+            completed = int(numbers[0].strip())
+            total = int(numbers[1].strip())
+            return total, completed
+
+        except (ValueError, AttributeError, IndexError) as e:
+            self.logger.warning(f"Failed to parse compound stat: {value}")
+            return None, None
