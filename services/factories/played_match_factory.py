@@ -60,10 +60,9 @@ class PlayedMatchFactory(MatchFactory):
             # Extract statistics
             statistics = self._extract_match_statistics(base_match.match_id)
             if not statistics:
-                self.logger.error(
-                    f"Failed to extract statistics for match: {match_url}"
+                self.logger.warning(
+                    f"Failed to extract statistics for match: {match_url}; continuing without statistics"
                 )
-                return None
 
             # Create played match
             return PlayedMatch.create(
@@ -76,7 +75,7 @@ class PlayedMatchFactory(MatchFactory):
                 away_team=base_match.away_team,
                 home_score=home_score,
                 away_score=away_score,
-                statistics=statistics,
+                statistics=statistics or None,
                 status=base_match.status,
             )
 
