@@ -11,6 +11,7 @@ from services.factories.fixtures_url_factory import FixturesURLFactory
 from services.factories.played_match_factory import PlayedMatchFactory
 from services.factories.team_factory import TeamFactory
 from services.head_to_head_service import HeadToHeadService
+from services.shared_team_cache import SharedTeamCache
 from services.team_form_service import TeamFormService
 
 
@@ -37,7 +38,9 @@ class DataExtractionCoordinator:
         self.logger = get_logger(__name__)
 
         # Initialize services
-        self.team_factory = TeamFactory(browser)
+        self.team_cache = SharedTeamCache()
+
+        self.team_factory = TeamFactory(browser=browser, cache=self.team_cache)
         self.played_match_factory = PlayedMatchFactory(
             browser=self.browser,
             team_factory=self.team_factory,

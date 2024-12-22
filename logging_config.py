@@ -48,7 +48,7 @@ def setup_logging(app_name: str = "flashscore_scraper") -> None:
 
     # Create formatters
     file_formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(funcName)s - %(levelname)s - %(message)s",
+        "%(asctime)s - %(processName)s - %(name)s - %(funcName)s - %(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 

@@ -6,6 +6,7 @@ from browsers.base_browser import BaseBrowser, LocatorType
 from logging_config import get_logger
 from models.team import Team
 from services.team_cache import TeamCache
+from services.team_cache_protocol import TeamCacheProtocol
 
 
 class TeamFactory:
@@ -16,7 +17,7 @@ class TeamFactory:
     COUNTRY_SELECTOR = '//*[@id="mc"]/div[5]/div[1]/h2/a[2]'
     STADIUM_INFO_SELECTOR = '//*[@id="mc"]/div[5]/div[1]/div[2]/div[2]'
 
-    def __init__(self, browser: BaseBrowser, cache: Optional[TeamCache] = None):
+    def __init__(self, browser: BaseBrowser, cache: Optional[TeamCacheProtocol] = None):
         """
         Initialize the factory with a browser instance and optional cache.
 
