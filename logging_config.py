@@ -12,7 +12,7 @@ class TqdmLoggingHandler(logging.Handler):
             msg = self.format(record)
             tqdm.write(msg)
             self.flush()
-        except Exception:
+        except (OSError, ValueError, TypeError):
             self.handleError(record)
 
 
@@ -31,8 +31,9 @@ def setup_logging(app_name: str = "flashscore_scraper") -> None:
     timestamp = datetime.now().strftime("%Y%m%d")
     log_file = logs_dir / f"{app_name}_{timestamp}.log"
 
-    # Set logging levels for all loggers except those starting with "browsers", "models", "services" prefixes to WARNING level, to avoid excessive logging
-    for logger_name in logging.root.manager.loggerDict:
+    # Set logging levels for all loggers except those starting with
+    # "browsers", "models", "services" prefixes to WARNING level, to avoid excessive logging
+    for logger_name in logging.Logger.manager.loggerDict:
         if not any(
             logger_name.startswith(prefix)
             for prefix in ["browsers", "models", "services"]
@@ -70,7 +71,7 @@ def setup_logging(app_name: str = "flashscore_scraper") -> None:
     root_logger.addHandler(console_handler)
 
     # Log the start of a new session
-    root_logger.info(f"=== Starting new logging session for {app_name} ===")
+    root_logger.info("=== Starting new logging session for %s ===", app_name)
 
 
 def get_logger(name: str) -> logging.Logger:
